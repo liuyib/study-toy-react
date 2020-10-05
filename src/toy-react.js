@@ -63,14 +63,21 @@ export function createElement(type, attributes, ...children) {
     elem.setAttribute(attr, attributes[attr]);
   }
 
-  for (let child of children) {
-    // 处理文本节点
-    if (typeof child === "string") {
-      child = new TextWrapper(child);
-    }
+  function insertChildren(children) {
+    for (let child of children) {
+      // 处理文本节点
+      if (typeof child === "string") {
+        child = new TextWrapper(child);
+      }
 
-    elem.appendChild(child);
+      if (typeof child === "object" && child instanceof Array) {
+        insertChildren(child);
+      } else {
+        elem.appendChild(child);
+      }
+    }
   }
+  insertChildren(children);
 
   return elem;
 }
