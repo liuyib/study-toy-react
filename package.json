@@ -1,0 +1,33 @@
+{
+  "name": "toy-react",
+  "version": "0.0.1",
+  "description": "A toy React framework.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx webpack --watch",
+    "build": "npx webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liuyib/ToyReact.git"
+  },
+  "keywords": [
+    "react",
+    "toy",
+    "tiny"
+  ],
+  "author": "liuyib",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liuyib/ToyReact/issues"
+  },
+  "homepage": "https://github.com/liuyib/ToyReact",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "@babel/preset-env": "^7.11.5",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  }
+}
