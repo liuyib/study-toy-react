@@ -17,5 +17,5 @@ render(
     <div>2</div>
     <div>3</div>
   </MyComponent>,
-  document.body
+  document.getElementById("app")
 );

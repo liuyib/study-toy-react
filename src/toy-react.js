@@ -8,8 +8,7 @@ class ElementWrapper {
   }
 
   appendChild(component) {
-    // 参数 component 也是一个 ElementWrapper 包装对象
-    // 所以 component.root 才是真正的 DOM 节点
+    // 参数 component 是一个 ElementWrapper 包装对象，其属性 root 才是真正的 DOM 节点
     this.root.appendChild(component.root);
   }
 }
@@ -22,10 +21,8 @@ class TextWrapper {
 
 export class Component {
   constructor() {
-    // Object.create(null) 创建一个绝对空的对象
     this.props = Object.create(null);
     this.children = [];
-    // _ 开头表示私有属性
     this._root = null;
   }
 
@@ -38,9 +35,12 @@ export class Component {
   }
 
   get root() {
-    // 获取 Component 的 root 属性时，返回 render 后的 root 属性，
-    // 如果 render 后没有 root 属性，则会递归调用，直到获取 root 属性。
     if (!this._root) {
+      // 调用自定义组件中的 render 函数，在 webpack 编译后，相当于调用 createElement 函数
+      // 所以，this.render().root 等价于获取 createElement 返回值的 root 属性
+      // 如果 root 属性不存在，则表明还未调用到 ElementWrapper 或 TextWrapper
+      // 此时获取的是 Component 类的 root 属性，这就又触发了 get root()，形成递归调用
+      // 直到调用到 ElementWrapper 或 TextWrapper，方可获取到 root 属性
       this._root = this.render().root;
     }
 
@@ -48,13 +48,19 @@ export class Component {
   }
 }
 
+/**
+ * 创建包装 DOM 节点
+ * @param {string} type 根据大小写，@babel/plugin-transform-react-jsx 插件会自动决定传入“字符串” 或 “自定义组件类”
+ * @param {Object} attributes 节点属性
+ * @param  {Array|string} children 子节点（“由 new ElementWrapper 实例组成的数组” 或 “纯文本”）
+ */
 export function createElement(type, attributes, ...children) {
   let elem;
 
   if (typeof type === "string") {
     elem = new ElementWrapper(type);
   }
-  // 传入的参数是一个类组件
+  // 传入的参数是一个组件（类）
   else {
     elem = new type();
   }
@@ -63,25 +69,35 @@ export function createElement(type, attributes, ...children) {
     elem.setAttribute(attr, attributes[attr]);
   }
 
-  function insertChildren(children) {
+  /**
+   * 处理嵌套的子节点
+   * @param {Array} children 由 new ElementWrapper 实例组成的数组
+   */
+  const insertChildren = (children) => {
     for (let child of children) {
       // 处理文本节点
       if (typeof child === "string") {
         child = new TextWrapper(child);
       }
 
+      // 处理嵌套的子元素
       if (typeof child === "object" && child instanceof Array) {
         insertChildren(child);
       } else {
         elem.appendChild(child);
       }
     }
-  }
+  };
   insertChildren(children);
 
   return elem;
 }
 
+/**
+ * 将整个应用挂载到根 DOM 节点
+ * @param {JSXComponent} component JSX 组件
+ * @param {HTMLElement} parentElement 根 DOM 节点
+ */
 export function render(component, parentElement) {
   parentElement.appendChild(component.root);
 }
