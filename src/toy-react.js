@@ -9,6 +9,8 @@ class ElementWrapper {
     if (/^on([\s\S]+)/.test(name)) {
       const eventName = RegExp.$1.toLowerCase();
       this.root.addEventListener(eventName, value);
+    } else if (name === "className") {
+      this.root.setAttribute("class", value);
     } else {
       this.root.setAttribute(name, value);
     }
