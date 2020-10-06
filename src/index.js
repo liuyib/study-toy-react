@@ -1,22 +1,30 @@
 import ToyReact from "./toy-react";
 
 class App extends ToyReact.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      count: 1,
+    };
+  }
+
   render() {
     return (
       <div>
         <h1>Toy React</h1>
-        {this.children}
+        <button
+          onClick={() => {
+            this.state.count += 1;
+            this.rerender();
+          }}
+        >
+          Add
+        </button>
+        Count: <span>{this.state.count.toString()}</span>
       </div>
     );
   }
 }
 
-ToyReact.render(
-  <App id="a" class="b">
-    <h2>Awesome Project</h2>
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-  </App>,
-  document.getElementById("app")
-);
+ToyReact.render(<App />, document.getElementById("app"));
