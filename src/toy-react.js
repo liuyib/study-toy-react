@@ -114,6 +114,10 @@ export function createElement(type, attributes, ...children) {
    */
   const insertChildren = (children) => {
     for (let child of children) {
+      if (child === null) {
+        continue;
+      }
+
       if (Array.isArray(child)) {
         insertChildren(child);
       } else if (typeof child === "string") {
