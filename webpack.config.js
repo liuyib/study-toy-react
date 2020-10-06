@@ -1,6 +1,11 @@
 module.exports = {
   entry: {
-    main: "./src/index.js",
+    dist: "./src/index.js",
+    demo: "./src/index.js",
+  },
+  output: {
+    path: __dirname,
+    filename: "[name]/bundle.js",
   },
   mode: "development" /* process.env.NODE_ENV */,
   optimization: {
