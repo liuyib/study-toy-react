@@ -59,9 +59,8 @@ export function createElement(type, attributes, ...children) {
 
   if (typeof type === "string") {
     elem = new ElementWrapper(type);
-  }
-  // 传入的参数是一个组件（类）
-  else {
+  } else {
+    // 传入的参数是一个 class
     elem = new type();
   }
 
@@ -75,17 +74,16 @@ export function createElement(type, attributes, ...children) {
    */
   const insertChildren = (children) => {
     for (let child of children) {
-      // 处理文本节点
+      if (Array.isArray(child)) {
+        insertChildren(child);
+        return;
+      }
+
       if (typeof child === "string") {
         child = new TextWrapper(child);
       }
 
-      // 处理嵌套的子元素
-      if (typeof child === "object" && child instanceof Array) {
-        insertChildren(child);
-      } else {
-        elem.appendChild(child);
-      }
+      elem.appendChild(child);
     }
   };
   insertChildren(children);
@@ -101,3 +99,9 @@ export function createElement(type, attributes, ...children) {
 export function render(component, parentElement) {
   parentElement.appendChild(component.root);
 }
+
+export default {
+  createElement,
+  render,
+  Component,
+};

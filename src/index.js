@@ -1,21 +1,22 @@
-import { createElement, Component, render } from "./toy-react";
+import ToyReact from "./toy-react";
 
-class MyComponent extends Component {
+class App extends ToyReact.Component {
   render() {
     return (
       <div>
-        <h1>My Component</h1>
+        <h1>Toy React</h1>
         {this.children}
       </div>
     );
   }
 }
 
-render(
-  <MyComponent id="a" class="b">
+ToyReact.render(
+  <App id="a" class="b">
+    <h2>Awesome Project</h2>
     <div>1</div>
     <div>2</div>
     <div>3</div>
-  </MyComponent>,
+  </App>,
   document.getElementById("app")
 );
