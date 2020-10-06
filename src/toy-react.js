@@ -81,14 +81,11 @@ export function createElement(type, attributes, ...children) {
     for (let child of children) {
       if (Array.isArray(child)) {
         insertChildren(child);
-        return;
+      } else if (typeof child === "string") {
+        elem.appendChild(new TextWrapper(child));
+      } else {
+        elem.appendChild(child);
       }
-
-      if (typeof child === "string") {
-        child = new TextWrapper(child);
-      }
-
-      elem.appendChild(child);
     }
   };
   insertChildren(children);
