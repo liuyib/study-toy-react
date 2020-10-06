@@ -6,6 +6,7 @@ class App extends ToyReact.Component {
 
     this.state = {
       count: 1,
+      const: 411,
     };
   }
 
@@ -15,13 +16,15 @@ class App extends ToyReact.Component {
         <h1>Toy React</h1>
         <button
           onClick={() => {
-            this.state.count += 1;
-            this.rerender();
+            this.setState({
+              count: this.state.count + 1,
+            });
           }}
         >
           Add
         </button>
-        Count: <span>{this.state.count.toString()}</span>
+        <div>Count: {this.state.count.toString()}</div>
+        <div>Const: {this.state.const.toString()}</div>
       </div>
     );
   }
