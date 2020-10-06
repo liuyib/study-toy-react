@@ -62,8 +62,15 @@ export class Component {
   }
 
   rerender() {
-    this._range.deleteContents();
-    this[RENDER_TO_DOM](this._range);
+    const oldRange = this._range;
+    const range = document.createRange();
+
+    range.setStart(oldRange.startContainer, oldRange.startOffset);
+    range.setEnd(oldRange.startContainer, oldRange.startOffset);
+    this[RENDER_TO_DOM](range);
+
+    oldRange.setStart(range.endContainer, range.endOffset);
+    oldRange.deleteContents();
   }
 
   setState(newState) {
