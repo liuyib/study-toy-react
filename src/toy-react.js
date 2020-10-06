@@ -1,3 +1,5 @@
+const RENDER_TO_DOM = Symbol("render to dom");
+
 class ElementWrapper {
   constructor(type) {
     this.root = document.createElement(type);
@@ -8,14 +10,26 @@ class ElementWrapper {
   }
 
   appendChild(component) {
-    // 参数 component 是一个 ElementWrapper 包装对象，其属性 root 才是真正的 DOM 节点
-    this.root.appendChild(component.root);
+    const range = document.createRange();
+    range.setStart(this.root, this.root.childNodes.length);
+    range.setEnd(this.root, this.root.childNodes.length);
+    component[RENDER_TO_DOM](range);
+  }
+
+  [RENDER_TO_DOM](range) {
+    range.deleteContents();
+    range.insertNode(this.root);
   }
 }
 
 class TextWrapper {
   constructor(content) {
     this.root = document.createTextNode(content);
+  }
+
+  [RENDER_TO_DOM](range) {
+    range.deleteContents();
+    range.insertNode(this.root);
   }
 }
 
@@ -34,17 +48,8 @@ export class Component {
     this.children.push(component);
   }
 
-  get root() {
-    if (!this._root) {
-      // 调用自定义组件中的 render 函数，在 webpack 编译后，相当于调用 createElement 函数
-      // 所以，this.render().root 等价于获取 createElement 返回值的 root 属性
-      // 如果 root 属性不存在，则表明还未调用到 ElementWrapper 或 TextWrapper
-      // 此时获取的是 Component 类的 root 属性，这就又触发了 get root()，形成递归调用
-      // 直到调用到 ElementWrapper 或 TextWrapper，方可获取到 root 属性
-      this._root = this.render().root;
-    }
-
-    return this._root;
+  [RENDER_TO_DOM](range) {
+    this.render()[RENDER_TO_DOM](range);
   }
 }
 
@@ -94,10 +99,14 @@ export function createElement(type, attributes, ...children) {
 /**
  * 将整个应用挂载到根 DOM 节点
  * @param {JSXComponent} component JSX 组件
- * @param {HTMLElement} parentElement 根 DOM 节点
+ * @param {HTMLElement} container 根 DOM 节点
  */
-export function render(component, parentElement) {
-  parentElement.appendChild(component.root);
+export function render(component, container) {
+  const range = document.createRange();
+  range.setStart(container, 0);
+  range.setEnd(container, container.childNodes.length);
+  range.deleteContents();
+  component[RENDER_TO_DOM](range);
 }
 
 export default {
