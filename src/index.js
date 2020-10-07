@@ -123,9 +123,6 @@ class Game extends ToyReact.Component {
 
 ToyReact.render(<Game />, document.getElementById("app"));
 
-// let game = <Game />;
-// console.log(`game`, game.vdom);
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
